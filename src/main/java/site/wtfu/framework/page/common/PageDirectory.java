@@ -46,6 +46,7 @@ public class PageDirectory extends Common<PageDirectory> {
         int slots_block = PAGE_N_DIR_SLOTS * 2;
         int position = AlignmentUtil.align(ibd.position()) - ConstVal.fil_trailer_length - slots_block;
         ibd.position(position);
+        _section.setStart(position);
 
         slots = new short[PAGE_N_DIR_SLOTS];
         for (int i = 0; i < slots.length; i++) {

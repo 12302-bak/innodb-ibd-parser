@@ -1,10 +1,8 @@
 package site.wtfu.framework.common;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import site.wtfu.framework.page.Page;
 
 import java.nio.MappedByteBuffer;
 
@@ -20,16 +18,25 @@ import java.nio.MappedByteBuffer;
 @Setter
 public abstract class Common <T extends Common<T>> {
 
-
     @Data
     @Accessors(chain = true)
-    @AllArgsConstructor
-    private static class Section{
+    protected static class Section{
         private int start;
         private int stop;
+
+        // [...] 表示页内偏移
+        @Override
+        public String toString() {
+            return "Section{" +
+                    "start=" + start + "[" + (start % ConstVal.PAGE_SIZE) + "]" +
+                    ", stop=" + stop + "[" + (stop % ConstVal.PAGE_SIZE) + "]" +
+                    '}';
+        }
     }
 
-    private Section _section;
+    protected Section _section = new Section();
+    public int getSectionStop() { return _section.getStop(); }
+    public int getSectionStart(){ return _section.getStart(); }
 
     public T decodeBytes(MappedByteBuffer ibd){
         return decodeBytes(ibd, ibd.position());
@@ -40,11 +47,13 @@ public abstract class Common <T extends Common<T>> {
     }
 
     public T decodeBytes(MappedByteBuffer ibd, boolean reset, int from){
+        _section.setStart(from);
         ibd.position(from);
         
         @SuppressWarnings("unchecked") T rst = (T)this;
         rst = doDecodeBytes(rst, ibd);
-        this._section = new Section(from, ibd.position());
+        _section.setStop(ibd.position());
+
 
         if(reset){ ibd.position(from);}
         return rst;

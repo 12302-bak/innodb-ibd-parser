@@ -98,10 +98,10 @@ public class PageHeader extends Common<PageHeader> {
     public long PAGE_INDEX_ID;
 
     // 10 byte
-    public byte[] PAGE_BTR_SEG_LEAF;
+    public SegmentHeader PAGE_BTR_SEG_LEAF;
 
     // 10 byte
-    public byte[] PAGE_BTR_SEG_TOP;
+    public SegmentHeader PAGE_BTR_SEG_TOP;
 
     @Override
     protected PageHeader doDecodeBytes(PageHeader pageHeader, MappedByteBuffer ibd) {
@@ -122,8 +122,8 @@ public class PageHeader extends Common<PageHeader> {
         PAGE_LEVEL = ibd.getShort();
         PAGE_INDEX_ID = ibd.getLong();
 
-        PAGE_BTR_SEG_LEAF = new byte[10]; ibd.get(PAGE_BTR_SEG_LEAF);
-        PAGE_BTR_SEG_TOP = new byte[10]; ibd.get(PAGE_BTR_SEG_TOP);
+        PAGE_BTR_SEG_LEAF = new SegmentHeader().decodeBytes(ibd);
+        PAGE_BTR_SEG_TOP = new SegmentHeader().decodeBytes(ibd);
         return pageHeader;
     }
 }
