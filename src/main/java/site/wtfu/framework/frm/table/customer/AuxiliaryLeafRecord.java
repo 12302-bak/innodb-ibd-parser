@@ -1,4 +1,4 @@
-package site.wtfu.framework.frm.table.record_format_demo;
+package site.wtfu.framework.frm.table.customer;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,44 +18,39 @@ import java.nio.MappedByteBuffer;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class LeafRecord extends CommonRecord {
+public class AuxiliaryLeafRecord extends CommonRecord {
 
-    public byte[] trx_id;
+    public byte store_id;
 
-    public byte[] roll_ptr;
+    public short address_id;
 
-    public String c2;
+    public String last_name;
 
-    public String c3;
+    public short customer_id;
 
-    public String c4;
+    public String email;
 
     @Override
     protected CommonRecord doDecodeBytes(MappedByteBuffer ibd, byte[] nullValueField, ByteBuffer eeBuf) {
 
+        byte[] data;
         int nullValueIndex = 0;
 
-        trx_id = new byte[6]; ibd.get(trx_id);
-        roll_ptr = new byte[7]; ibd.get(roll_ptr);
+        // index key
+        store_id = ibd.get();
+        address_id = ibd.getShort();
 
-        // 先判断可为 NULL 值；然后读取长度字节
-        // 是否为NULL
-        byte[] data = new byte[ RemUtil.readLength(eeBuf) ]; ibd.get(data);
-        c2 = new String(data);
-
-        // c3
         boolean aNull;
         aNull = RemUtil.isNull(nullValueIndex++, nullValueField);
         if(!aNull){
-            data = new byte[ 10 ]; ibd.get(data);
-            c3 = new String(data);
+            data = new byte[ RemUtil.readLength(eeBuf) ]; ibd.get(data);
+            last_name = new String(data);
         }
 
-        aNull = RemUtil.isNull(nullValueIndex++, nullValueField);
-        if(!aNull){
-            data = new byte[ RemUtil.readLength(eeBuf) ]; ibd.get(data);
-            c4 = new String(data);
-        }
+        // primary key
+        customer_id = ibd.getShort();
+        data = new byte[ RemUtil.readLength(eeBuf) ]; ibd.get(data);
+        email = new String(data);
 
         return this;
     }

@@ -15,14 +15,13 @@ public class IbdTest {
 
 
     @Test
-    public void testParseIbdFile() {
+    public void testParseRecordFormatDemoIbdFile() {
         String ibdFilePath = "/tmp/mysql/demos/record_format_demo.ibd";
         //ibdFilePath = "/tmp/mysql/ibdata1";
         MappedByteBuffer ibd;
         try (FileChannel fileChannel = new FileInputStream(ibdFilePath).getChannel()) {
             ibd = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
             ibd.order(ByteOrder.BIG_ENDIAN);
-
 
             List<Page> list = new ArrayList<>();
             while(ibd.hasRemaining()) {
@@ -33,7 +32,44 @@ public class IbdTest {
 
             System.out.println(list.size());
         }catch (Exception e){ e.printStackTrace();}
+    }
 
+    @Test
+    public void testParseCustomerIbdFile() {
+        String ibdFilePath = "/tmp/mysql/demos/customer.ibd";
+        MappedByteBuffer ibd;
+        try (FileChannel fileChannel = new FileInputStream(ibdFilePath).getChannel()) {
+            ibd = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
+            ibd.order(ByteOrder.BIG_ENDIAN);
+
+            List<Page> list = new ArrayList<>();
+            while(ibd.hasRemaining()) {
+
+                Page page = new Page().decodeBytes(ibd);
+                list.add(page);
+            }
+
+            System.out.println(list.size());
+        }catch (Exception e){ e.printStackTrace();}
+    }
+
+    @Test
+    public void testParseFilmIbdFile() {
+        String ibdFilePath = "/tmp/mysql/demos/film.ibd";
+        MappedByteBuffer ibd;
+        try (FileChannel fileChannel = new FileInputStream(ibdFilePath).getChannel()) {
+            ibd = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
+            ibd.order(ByteOrder.BIG_ENDIAN);
+
+            List<Page> list = new ArrayList<>();
+            while(ibd.hasRemaining()) {
+
+                Page page = new Page().decodeBytes(ibd);
+                list.add(page);
+            }
+
+            System.out.println(list.size());
+        }catch (Exception e){ e.printStackTrace();}
     }
 
 }

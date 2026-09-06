@@ -44,7 +44,7 @@ public class Page extends Common<Page> {
             case FIL_PAGE_TYPE_SYS:
                 body = new SYS_PageImpl().decodeBytes(ibd); break;
             case FIL_PAGE_INDEX:
-                body = new INDEX_PageImpl().decodeBytes(ibd); break;
+                body = new INDEX_PageImpl(fileHeader.FIL_PAGE_ARCH_LOG_NO_OR_SPACE_ID).decodeBytes(ibd); break;
             case FIL_PAGE_TYPE_ALLOCATED:
             default:
                 decodeBody(ibd);
@@ -60,10 +60,18 @@ public class Page extends Common<Page> {
 
     @Override
     public String toString() {
+        String extra = "";
+        if("INDEX_PageImpl".equals(body.getClass().getSimpleName())){
+            INDEX_PageImpl impl = ((INDEX_PageImpl) body);
+            extra = ", PAGE_INDEX_ID=" + impl.page_header.getPAGE_INDEX_ID() +
+                    ", PAGE_LEVEL=" + impl.page_header.getPAGE_LEVEL() +
+                    ", PAGE_N_RECS=" + impl.records.size();
+        }
         return "Page{" +
                 "no=" + fileHeader.FIL_PAGE_OFFSET +
                 ", space_id=" + fileHeader.FIL_PAGE_ARCH_LOG_NO_OR_SPACE_ID +
                 ", type=" + fileHeader.FIL_PAGE_TYPE +
+                extra +
                 '}';
     }
 }

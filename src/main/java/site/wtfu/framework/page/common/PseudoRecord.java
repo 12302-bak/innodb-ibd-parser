@@ -20,13 +20,16 @@ import java.nio.MappedByteBuffer;
 @EqualsAndHashCode(callSuper = true)
 public class PseudoRecord extends Common<PseudoRecord> {
 
+    private int _limit;
+
     public RecordHeader recordHeader;
 
     public String value;
 
     @Override
     protected PseudoRecord doDecodeBytes(PseudoRecord pseudoRecord, MappedByteBuffer ibd) {
-        recordHeader = new RecordHeader().decodeBytes(ibd, ibd.position() - 5);
+        _limit = ibd.position() - 5;
+        recordHeader = new RecordHeader().decodeBytes(ibd, _limit);
         byte[] data = new byte[8]; ibd.get(data);
         value = new String(data);
         return pseudoRecord;

@@ -21,16 +21,15 @@ import java.nio.MappedByteBuffer;
 @EqualsAndHashCode(callSuper = true)
 public class CommonRecord extends Common<CommonRecord> {
 
-    protected int _limit;
+    private int _limit;
 
     private int type;
 
     private CommonRecord data;
 
     public CommonRecord(){}
-    public CommonRecord(int type, int _limit){
+    public CommonRecord(int type){
         this.type = type;
-        this._limit = _limit;
     }
 
     /*
@@ -66,14 +65,19 @@ public class CommonRecord extends Common<CommonRecord> {
 
     @Override
     protected CommonRecord doDecodeBytes(CommonRecord commonRecord, MappedByteBuffer ibd) {
-        int pkPos = ibd.position();
 
-        ibd.position(_limit);
-        byte[] estimateExtra = new byte[pkPos - 6 - _limit]; ibd.get(estimateExtra);
-        ByteBuffer eeBuf = ByteBuffer.wrap(estimateExtra);
+        int maxVariableField = 4 /* column */ * 2;
 
         // one byte enough!
-        nullValueField = new byte[1]; ibd.get(nullValueField);
+        nullValueField = new byte[1];
+
+        int pkPos = ibd.position(), fixed = nullValueField.length + 5;
+
+        ibd.position(pkPos - fixed - maxVariableField);
+        byte[] estimateExtra = new byte[maxVariableField]; ibd.get(estimateExtra);
+        ByteBuffer eeBuf = ByteBuffer.wrap(estimateExtra);
+
+        ibd.get(nullValueField);
         header = new RecordHeader().decodeBytes(ibd);
         c1 = ibd.getInt() & 0x7FFFFFFF;
 
@@ -83,6 +87,7 @@ public class CommonRecord extends Common<CommonRecord> {
             data = new NonLeafRecord().doDecodeBytes(ibd, nullValueField, eeBuf);
         }
 
+        _limit = pkPos - fixed - (eeBuf.capacity() - eeBuf.limit());
         return commonRecord;
     }
 
