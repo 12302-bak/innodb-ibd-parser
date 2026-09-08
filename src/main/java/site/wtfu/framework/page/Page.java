@@ -42,9 +42,13 @@ public class Page extends Common<Page> {
             case FIL_PAGE_INODE:
                 body = new INODE_PageImpl().decodeBytes(ibd); break;
             case FIL_PAGE_TYPE_SYS:
-                body = new SYS_PageImpl().decodeBytes(ibd); break;
+                body = new SYS_PageImpl(fileHeader.FIL_PAGE_OFFSET).decodeBytes(ibd); break;
             case FIL_PAGE_INDEX:
                 body = new INDEX_PageImpl(fileHeader.FIL_PAGE_ARCH_LOG_NO_OR_SPACE_ID).decodeBytes(ibd); break;
+            case FIL_PAGE_UNDO_LOG:
+                body = new UNDO_LOG_PageImpl().decodeBytes(ibd); break;
+            case FIL_PAGE_TYPE_TRX_SYS:
+                body = new TRX_SYS_PageImpl().decodeBytes(ibd); break;
             case FIL_PAGE_TYPE_ALLOCATED:
             default:
                 decodeBody(ibd);
