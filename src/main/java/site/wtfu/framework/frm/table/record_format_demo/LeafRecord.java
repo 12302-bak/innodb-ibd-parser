@@ -2,6 +2,7 @@ package site.wtfu.framework.frm.table.record_format_demo;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import site.wtfu.framework.frm.common.DB_ROLL_PTR;
 import site.wtfu.framework.utils.RemUtil;
 
 import java.nio.ByteBuffer;
@@ -22,7 +23,7 @@ public class LeafRecord extends CommonRecord {
 
     public byte[] trx_id;
 
-    public byte[] roll_ptr;
+    public DB_ROLL_PTR roll_ptr;
 
     public String c2;
 
@@ -36,7 +37,8 @@ public class LeafRecord extends CommonRecord {
         int nullValueIndex = 0;
 
         trx_id = new byte[6]; ibd.get(trx_id);
-        roll_ptr = new byte[7]; ibd.get(roll_ptr);
+        byte[] rp = new byte[7]; ibd.get(rp);
+        roll_ptr = new DB_ROLL_PTR(rp);
 
         // 先判断可为 NULL 值；然后读取长度字节
         // 是否为NULL

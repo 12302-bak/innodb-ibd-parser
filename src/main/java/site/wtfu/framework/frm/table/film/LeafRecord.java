@@ -2,6 +2,7 @@ package site.wtfu.framework.frm.table.film;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import site.wtfu.framework.frm.common.DB_ROLL_PTR;
 import site.wtfu.framework.utils.RemUtil;
 
 import java.nio.ByteBuffer;
@@ -24,7 +25,7 @@ public class LeafRecord extends CommonRecord {
 
     public byte[] trx_id;
 
-    public byte[] roll_ptr;
+    public DB_ROLL_PTR roll_ptr;
 
     public String title;
 
@@ -59,7 +60,9 @@ public class LeafRecord extends CommonRecord {
         film_id = ibd.getShort();
 
         trx_id = new byte[6]; ibd.get(trx_id);
-        roll_ptr = new byte[7]; ibd.get(roll_ptr);
+        byte[] rp = new byte[7]; ibd.get(rp);
+        roll_ptr = new DB_ROLL_PTR(rp);
+
 
         // other column
         byte[] data = new byte[ RemUtil.readLength(eeBuf) ]; ibd.get(data);

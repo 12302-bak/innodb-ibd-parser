@@ -2,6 +2,7 @@ package site.wtfu.framework.frm.table.customer;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import site.wtfu.framework.frm.common.DB_ROLL_PTR;
 import site.wtfu.framework.utils.RemUtil;
 
 import java.nio.ByteBuffer;
@@ -26,7 +27,7 @@ public class LeafRecord extends CommonRecord {
 
     public byte[] trx_id;
 
-    public byte[] roll_ptr;
+    public DB_ROLL_PTR roll_ptr;
 
     public byte store_id;
 
@@ -54,7 +55,8 @@ public class LeafRecord extends CommonRecord {
         email = new String(data);
 
         trx_id = new byte[6]; ibd.get(trx_id);
-        roll_ptr = new byte[7]; ibd.get(roll_ptr);
+        byte[] rp = new byte[7]; ibd.get(rp);
+        roll_ptr = new DB_ROLL_PTR(rp);
 
         // other column
         store_id = ibd.get();
